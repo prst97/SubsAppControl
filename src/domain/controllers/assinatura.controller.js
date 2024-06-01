@@ -34,7 +34,7 @@ export class AssinaturaController {
     @Post('assinaturas')
     @Bind(Body())
     async postAssinatura(assinatura) {
-        await this.assinaturaRepository.cadastrarAssinatura(assinatura);
+        return await this.assinaturaRepository.cadastrarAssinatura(assinatura);
     }
 
     @Delete('removerAssinatura/:codigo')

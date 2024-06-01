@@ -25,7 +25,7 @@ export class ClienteRepositoryORM  extends IClienteModelRepository{
   }
 
   async recuperarPorCodigo(codigo){
-    let cliente = await this.#clienteRep.findOneBy({codigo});
+    let cliente = await this.#clienteRep.findOneBy({codigo: codigo});
     return ClienteRepositoryORM.createFromObject(cliente);
   }
 

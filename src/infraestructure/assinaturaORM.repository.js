@@ -45,12 +45,26 @@ export class AssinaturaRepositoryORM  extends IAssinaturaModelRepository{
   }
 
   async buscarPorCliente(codCli){
-    let busca = await this.#assinaturaRep.find({codCli: codCli})
+    const cliente = await this.#clienteRep.findOneBy({ codigo: codCli });
+    if (!cliente) {
+      throw new Error('Cliente não encontrado');
+    }
+
+    const busca = await this.#assinaturaRep.find({
+      where: { codCli: cliente },
+    });
     return busca.map(AssinaturaRepositoryORM.createFromObject);
   }
 
   async buscarPorApp(codApp) {
-    let busca = await this.#assinaturaRep.find({codApp: codApp})
+    const aplicativo = await this.#aplicativoRep.findOneBy({ codigo: codApp });
+    if (!aplicativo) {
+      throw new Error('Aplicativo não encontrado');
+    }
+
+    const busca = await this.#assinaturaRep.find({
+      where: { codApp: aplicativo },
+    });
     return busca.map(AssinaturaRepositoryORM.createFromObject);
   }
 

@@ -1,19 +1,19 @@
 import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Patch, Body } from '@nestjs/common';
 import { AplicativoRepositoryORM } from '../../infraestructure/aplicativoORM.repository';
 
-@Controller('servcad/apps')
+@Controller('servcad')
 @Dependencies(AplicativoRepositoryORM) 
 export class AplicativoController {
     constructor(aplicativoRepository) {
         this.aplicativoRepository = aplicativoRepository;
     }
 
-    @Get()
+    @Get('aplicativos')
     async getApps() {
         return await this.aplicativoRepository.buscarTodosApps();
     }
 
-    @Get(':codigo')
+    @Get('aplicativos/:codigo')
     async getAppPorCodigo(codigo) {
         return await this.aplicativoRepository.recuperarPorCodigo(codigo);
     }
@@ -21,14 +21,14 @@ export class AplicativoController {
     @Post('cadastrarApp')
     @Bind(Body())
     async postApp(aplicativo) {
-        await this.aplicativoRepository.cadastrarApp(aplicativo);
+        return await this.aplicativoRepository.cadastrarApp(aplicativo);
     }
 
-    @Patch(':codigo')
+    @Patch('/aplicativos/atualizarCusto/:codigo')
     @Bind(Param('codigo'), Body())
     async patchApp(codigo, body) {
         const { custoMensal } = body;
-        await this.aplicativoRepository.atualizarCustoMensal(codigo, custoMensal);
+        return await this.aplicativoRepository.atualizarCustoMensal(codigo, custoMensal);
     }
 
     @Delete('removerApp/:codigo')

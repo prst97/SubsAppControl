@@ -2,7 +2,7 @@
 
 ## Description
 
-
+Este projeto consiste no desenvolvimento de um backend para um sistema de gerenciamento de assinaturas de aplicativos, utilizando o framework NestJS. O objetivo é criar uma API RESTful que permita o gerenciamento de clientes, aplicativos, assinaturas e pagamentos associados.
 
 ## Installation
 
