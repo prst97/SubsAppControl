@@ -1,8 +1,8 @@
 import { Injectable, Dependencies } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { IAplicativoModelRepository } from '../domain/repositories/IAplicativoModelRepository';
-import { AplicativoModel } from '../domain/entities/aplicativo.model';
-import { Aplicativo } from './aplicativo.entity';
+import { IAplicativoModelRepository } from '../../../domain/repositories/IAplicativoModelRepository';
+import { AplicativoModel } from '../../../domain/entities/aplicativo.model';
+import { Aplicativo } from '../Entities/aplicativo.entity';
 
 @Injectable()
 @Dependencies(getRepositoryToken(Aplicativo))
@@ -25,6 +25,7 @@ export class AplicativoRepositoryORM  extends IAplicativoModelRepository{
   }
 
   async atualizarCustoMensal(codigo, custoMensal){
+
     let ok = await this.#aplicativoRep
     .createQueryBuilder()
     .update(custoMensal)
@@ -35,7 +36,9 @@ export class AplicativoRepositoryORM  extends IAplicativoModelRepository{
       codigo: codigo,
     })
     .execute();
-    return ok;
+    
+    let aplicativo = await this.#aplicativoRep.findOneBy({codigo});
+    return AplicativoRepositoryORM.createFromObject(aplicativo);
   }
 
   async recuperarPorCodigo(codigo){
@@ -47,7 +50,7 @@ export class AplicativoRepositoryORM  extends IAplicativoModelRepository{
     const aplicativo = await this.#aplicativoRep.findOneBy({ codigo });
     if (aplicativo) {
       await this.#aplicativoRep.remove(aplicativo);
-      return true;
+      return AplicativoRepositoryORM.createFromObject(aplicativo)
     }
     return false;
   }
@@ -56,7 +59,7 @@ export class AplicativoRepositoryORM  extends IAplicativoModelRepository{
     let aplicativoModel = new AplicativoModel();
     aplicativoModel.codigo = codigo;
     aplicativoModel.nome = nome;
-    aplicativoModel.custoMensal = custoMensal;
+    aplicativoModel.custoMensal = parseFloat(custoMensal);
 
     return aplicativoModel;
   }

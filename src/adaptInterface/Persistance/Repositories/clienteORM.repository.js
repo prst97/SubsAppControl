@@ -1,8 +1,8 @@
 import { Injectable, Dependencies } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { IClienteModelRepository } from '../domain/repositories/IClienteModelRepository';
-import { ClienteModel } from '../domain/entities/cliente.model';
-import { Cliente } from './cliente.entity';
+import { IClienteModelRepository } from '../../../domain/repositories/IClienteModelRepository';
+import { ClienteModel } from '../../../domain/entities/cliente.model';
+import { Cliente } from '../Entities/cliente.entity';
 
 @Injectable()
 @Dependencies(getRepositoryToken(Cliente))
@@ -29,13 +29,11 @@ export class ClienteRepositoryORM  extends IClienteModelRepository{
     return ClienteRepositoryORM.createFromObject(cliente);
   }
 
-  async removerApp(codigo) {
+  async removerCliente(codigo) {
     const cliente = await this.#clienteRep.findOneBy({ codigo });
     if (cliente) {
       await this.#clienteRep.remove(cliente);
-      return true;
     }
-    return false;
   }
 
   static createFromObject({codigo, nome, email}){

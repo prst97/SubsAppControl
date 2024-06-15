@@ -6,4 +6,5 @@ export class IAssinaturaModelRepository {
     buscarPorApp(codApp) { }
     recuperarPorCodigo(codigo) { }
     removerAssinatura(codigo) { }
+    atualizarParcial(codigo, dados) { }
 }

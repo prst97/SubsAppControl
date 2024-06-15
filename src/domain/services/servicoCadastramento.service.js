@@ -1,110 +1,94 @@
-import { Injectable, Dependencies } from "@nestjs/common";
-import { AplicativoRepositoryORM } from "../../infraestructure/aplicativoORM.repository.js";
+import { Injectable, Dependencies } from '@nestjs/common';
+import { AplicativoRepositoryORM } from '../../adaptInterface/Persistance/Repositories/aplicativoORM.repository';
+import { AssinaturaRepositoryORM } from '../../adaptInterface/Persistance/Repositories/assinaturaORM.repository';
+import { ClienteRepositoryORM } from '../../adaptInterface/Persistance/Repositories/clienteORM.repository';
+import { PagamentoRepositoryORM } from '../../adaptInterface/Persistance/Repositories/pagamentoORM.repository';
 
 @Injectable()
-@Dependencies(AplicativoRepositoryORM)
+@Dependencies(
+  AplicativoRepositoryORM, 
+  AssinaturaRepositoryORM, 
+  ClienteRepositoryORM, 
+  PagamentoRepositoryORM
+  )
 export class ServicoCadastramento {
+  constructor(
+    aplicativoRepository, 
+    assinaturaRepository, 
+    clienteRepository, 
+    pagamentoRepository,
+  ) {
+    this.aplicativoRepository = aplicativoRepository;
+    this.assinaturaRepository = assinaturaRepository;
+    this.clienteRepository = clienteRepository;
+    this.pagamentoRepository = pagamentoRepository;
+  }
 
-    constructor(aplicativoRepository) {
-        this.aplicativoRepository = aplicativoRepository;
-    }
-    // Aplicativo
+  // Aplicativo
+  async buscarTodosApps() {
+    return this.aplicativoRepository.buscarTodosApps();
+  }
 
-    async buscarTodosApps() {
-        return this.aplicativoRepository.buscarTodosApps()
-    }
+  async recuperarAplicativoPorCodigo(codigo) {
+    return this.aplicativoRepository.recuperarPorCodigo(codigo);
+  }
 
-    async cadastrarApp(aplicativo) {
-        return this.aplicativoRepository.cadastrarApp(aplicativo)
-    }
+  async cadastrarApp(aplicativo) {
+    return this.aplicativoRepository.cadastrarApp(aplicativo);
+  }
 
-    async atualizarCustoMensal(codigo, custoMensal) {
-        return this.aplicativoRepository.atualizarCustoMensal(codigo, custoMensal);
-    }
+  async atualizarCustoMensal(codigo, custoMensal) {
+    return this.aplicativoRepository.atualizarCustoMensal(codigo, custoMensal);
+  }
 
-    async removerApp(codigo) {
-        return this.aplicativoRepository.removerApp(codigo)
-    }
+  async removerApp(codigo) {
+    return this.aplicativoRepository.removerApp(codigo);
+  }
 
-    
+  // Assinatura
+  async cadastrarAssinatura(assinatura) {
+    return this.assinaturaRepository.cadastrarAssinatura(assinatura);
+  }
 
-    // Assinatura
+  async buscarTodasAssinaturas() {
+    return this.assinaturaRepository.buscarTodasAssinaturas();
+  }
 
-    /** async cadastrarAssinatura(assinatura) {
-        const resultado = await query({
-            query: 'INSERT INTO Assinatura (codigo, codCli, codApp, inicioVigencia, fimVigencia, status) VALUES (?, ?, ?, ?, ?, ?)',
-            values: [assinatura.codigo, assinatura.codCli, assinatura.codApp, assinatura.inicioVigencia, assinatura.fimVigencia, assinatura.status]
-        });
-        return resultado;
-    }
+  async buscarAssinaturasPorTipo(tipo) {
+    return this.assinaturaRepository.buscarPorTipoStatus(tipo);
+  }
 
-    async buscarAssinaturasPorTipo(tipo) {
-        let query = 'SELECT * FROM Assinatura WHERE status = ?';
-        let values = [];
-      
-        switch (tipo.toUpperCase()) {
-          case 'ATIVAS':
-            values = ['ATIVA']
-            break;
-          case 'CANCELADAS':
-            query += ' WHERE status = ?';
-            values = ['CANCELADA']
-            break;
-          case 'TODAS':
-            // Nenhum filtro adicional necessário
-            break;
-          default:
-            throw new Error(`Tipo inválido: ${tipo}`);
-        }
-      
-        const resultado = await query({
-          query: query,
-          values: values,
-        });
+  async buscarAssinaturasPorApp(codApp) {
+    return this.assinaturaRepository.buscarPorApp(codApp);
+  }
 
-        return resultado;
-    }
-    
-    async buscarAssinaturasPorApp(codApp){
-        const resultado = await query({
-            query: 'SELECT * FROM Assinatura WHERE codApp = ?',
-            values: [codApp]
-        });
-        return resultado;
-    }
+  async buscarAssinaturasPorCliente(codCli) {
+    return this.assinaturaRepository.buscarPorCliente(codCli);
+  }
 
-    async removerAssinatura(codigo) {
-        const resultado = await query({
-            query: 'DELETE FROM Aplicativo WHERE codigo = ?',
-            values: [codigo]
-        });
-        return resultado;
-    }
+  async recuperarAssinaturaPorCodigo(codigo) {
+    return this.assinaturaRepository.recuperarPorCodigo(codigo);
+  }
 
-    // Cliente
+  async removerAssinatura(codigo) {
+    return this.assinaturaRepository.removerAssinatura(codigo);
+  }
 
-    async cadastrarCliente(cliente) {
-        const resultado = await query({
-            query: 'INSERT INTO Cliente (codigo, nome, email) VALUES (?, ?, ?)',
-            values: [cliente.codigo, cliente.nome, cliente.email]
-        });
-        return resultado;
-    }
+  // Cliente
+  async cadastrarCliente(cliente) {
+    return this.clienteRepository.cadastrarCliente(cliente);
+  }
 
-    async buscarTodosClientes() {
-        const clientes = await query({
-            query: 'SELECT * FROM Cliente',
-            values: []
-        });
-        return clientes;
-    }
+  async buscarTodosClientes() {
+    return this.clienteRepository.buscarTodosClientes();
+  }
 
-    async removerCliente(codigo) {
-        const resultado = await query({
-            query: 'DELETE FROM Aplicativo WHERE codigo = ?',
-            values: [codigo]
-        });
-        return resultado;
-    } **/
+  async recuperarClientePorCodigo(codigo) {
+    return this.clienteRepository.recuperarPorCodigo(codigo);
+  }
+
+  async removerCliente(codigo) {
+    return this.clienteRepository.removerCliente(codigo);
+  }
 
 }

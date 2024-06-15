@@ -1,11 +1,11 @@
-import { Entity, Column, PrimaryColumn, JoinColumn } from 'typeorm';
-import { ManyToOne } from '../../node_modules/typeorm/index';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
+import { ManyToOne } from '../../../../node_modules/typeorm/index';
 import { Aplicativo } from './aplicativo.entity';
 import { Cliente } from './cliente.entity';
 
 @Entity('Assinatura')
 export class Assinatura {
-    @PrimaryColumn('int')
+    @PrimaryGeneratedColumn()
     codigo;
 
     @ManyToOne(() => Cliente, (cliente)=>cliente.codigo, {nullable:false})
@@ -16,12 +16,12 @@ export class Assinatura {
     @JoinColumn({ name: 'codApp' })
     codApp;
 
-    @Column('date')
+    @Column('date', {nullable:false})
     inicioVigencia;
 
-    @Column('date')
+    @Column('date', {nullable:false})
     fimVigencia;
 
-    @Column('varchar')
+    @Column('varchar', { length: 10}, {nullable:false})
     status;
 }

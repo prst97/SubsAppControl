@@ -3,4 +3,5 @@ export class IPagamentoModelRepository {
     registrarPagamento(pagamento) { }
     recuperarPorCodigo(codigo) { }
     removerPagamento(codigo) { }
+    realizarPagamento(pagamento) { }
 }
