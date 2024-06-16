@@ -3,13 +3,15 @@ import { AplicativoRepositoryORM } from '../../adaptInterface/Persistance/Reposi
 import { AssinaturaRepositoryORM } from '../../adaptInterface/Persistance/Repositories/assinaturaORM.repository';
 import { ClienteRepositoryORM } from '../../adaptInterface/Persistance/Repositories/clienteORM.repository';
 import { PagamentoRepositoryORM } from '../../adaptInterface/Persistance/Repositories/pagamentoORM.repository';
+import { UsuarioRepositoryORM } from '../../adaptInterface/Persistance/Repositories/usuarioORM.repository';
 
 @Injectable()
 @Dependencies(
   AplicativoRepositoryORM, 
   AssinaturaRepositoryORM, 
   ClienteRepositoryORM, 
-  PagamentoRepositoryORM
+  PagamentoRepositoryORM,
+  UsuarioRepositoryORM
   )
 export class ServicoCadastramento {
   constructor(
@@ -17,11 +19,13 @@ export class ServicoCadastramento {
     assinaturaRepository, 
     clienteRepository, 
     pagamentoRepository,
+    usuarioRepository,
   ) {
     this.aplicativoRepository = aplicativoRepository;
     this.assinaturaRepository = assinaturaRepository;
     this.clienteRepository = clienteRepository;
     this.pagamentoRepository = pagamentoRepository;
+    this.usuarioRepository = usuarioRepository;
   }
 
   // Aplicativo
@@ -91,4 +95,25 @@ export class ServicoCadastramento {
     return this.clienteRepository.removerCliente(codigo);
   }
 
+  // Usuario
+
+  async buscarTodosUsuarios() {
+    return this.usuarioRepository.buscarUsuarios();
+  }
+
+  async buscarUsuarioPorNome(nome) {
+    return this.usuarioRepository.buscarUsuarioPorNome(nome)
+  }
+
+  async cadastrarUsuario(usuario) {
+    return this.usuarioRepository.cadastrarUsuario(usuario);
+  }
+
+  async trocarSenhaUsuario(usuario, novaSenha) {
+    return this.usuarioRepository.trocarSenha(usuario, novaSenha)
+  }
+
+  async removerUsuario(usuario) {
+    this.usuarioRepository.removerUsuario(usuario)
+  }
 }

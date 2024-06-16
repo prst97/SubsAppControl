@@ -1,6 +1,9 @@
-import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Body, HttpStatus, HttpException, ParseIntPipe, UsePipes } from '@nestjs/common';
+import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Body, HttpStatus, HttpException, ParseIntPipe, UsePipes, UseGuards } from '@nestjs/common';
 import { ServicoCadastramento } from '../../domain/services/servicoCadastramento.service';
 import { CriarClienteValidatorPipe } from '../../validations/cliente/cliente-criar.validator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/roles/roles.decorator';
 
 @Controller('servcad')
 @Dependencies(ServicoCadastramento) 
@@ -9,6 +12,8 @@ export class ClienteController {
         this.servicoCadastramento = servicoCadastramento;
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('clientes')
     async getClientes() {
         try {
@@ -25,6 +30,8 @@ export class ClienteController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('clientes/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async getClientesPorCodigo(codigo) {
@@ -36,6 +43,8 @@ export class ClienteController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Post('cadastrarCliente')
     @Bind(Body())
     @UsePipes(CriarClienteValidatorPipe)
@@ -48,6 +57,8 @@ export class ClienteController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Delete('removerCliente/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async deleteCliente(codigo) {

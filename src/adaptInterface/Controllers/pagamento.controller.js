@@ -1,6 +1,9 @@
-import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Body, HttpException, HttpStatus, ParseIntPipe, UsePipes } from '@nestjs/common';
+import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Body, HttpException, HttpStatus, ParseIntPipe, UsePipes, UseGuards } from '@nestjs/common';
 import { ServicoPagamento } from '../../domain/services/servicoPagamentos.service';
 import { CriarPagamentoValidatorPipe } from '../../validations/pagamento/pagamento-criar.validator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/roles/roles.decorator';
 
 @Controller('servcad')
 @Dependencies(ServicoPagamento) 
@@ -9,6 +12,8 @@ export class PagamentoController {
         this.servicoPagamento = servicoPagamento;
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('pagamentos')
     async getTodosPagamentos() {
         try {
@@ -25,6 +30,8 @@ export class PagamentoController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('pagamentos/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async getPagamentoPorCodigo(codigo) {
@@ -36,6 +43,8 @@ export class PagamentoController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Post('registrarPagamento')
     @Bind(Body())
     @UsePipes(CriarPagamentoValidatorPipe)
@@ -48,6 +57,8 @@ export class PagamentoController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Delete('removerPagamento/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async deletePagamento(codigo) {

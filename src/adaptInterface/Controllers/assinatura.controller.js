@@ -1,9 +1,12 @@
-import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Body, Patch, HttpException, HttpStatus, ParseIntPipe, UsePipes } from '@nestjs/common';
+import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Body, Patch, HttpException, HttpStatus, ParseIntPipe, UsePipes, UseGuards } from '@nestjs/common';
 import { ServicoCadastramento } from '../../domain/services/servicoCadastramento.service';
 import { ServicoAssinaturasValidas } from '../../domain/services/servicoAssinaturasValidas.service';
 import { VerificarAssinaturaValidaUC } from '../../application/assinatura/verificarAssinaturaValidaUC';
 import { CriarAssinaturaValidatorPipe } from '../../validations/assinatura/assinatura-criar.validator';
-
+import { AtualizarAssinaturaValidatorPipe } from '../../validations/assinatura/assinatura-criar.validator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/roles/roles.decorator';
 
 @Controller('servcad')
 @Dependencies(ServicoCadastramento, ServicoAssinaturasValidas, VerificarAssinaturaValidaUC) 
@@ -14,6 +17,8 @@ export class AssinaturaController {
         this.verificarAssinaturaValidaUC = verificarAssinaturaValidaUC;
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('assinaturas')
     async getAssinaturas() {
         try {
@@ -30,6 +35,8 @@ export class AssinaturaController {
         }
     }
     
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('assinaturas/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async getAssinaturaPorCodigo(codigo) {
@@ -41,6 +48,8 @@ export class AssinaturaController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('assinaturas/status/:tipo')
     @Bind(Param('tipo'))
     async getAssinaturasPorTipoStatus(tipo) {
@@ -59,6 +68,8 @@ export class AssinaturaController {
 
     }  
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('asscli/:codCli')
     @Bind(Param('codCli', ParseIntPipe))
     async getAssinaturasPorCodCli(codCli) {
@@ -76,6 +87,8 @@ export class AssinaturaController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('assapp/:codApp')
     @Bind(Param('codApp', ParseIntPipe))
     async getAssinaturasPorCodApp(codApp) {
@@ -93,7 +106,9 @@ export class AssinaturaController {
         }
     }
 
-    @Post('assinaturas')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
+    @Post('cadastrarAssinatura')
     @Bind(Body())
     @UsePipes(CriarAssinaturaValidatorPipe)
     async postAssinatura(assinatura) {
@@ -105,8 +120,10 @@ export class AssinaturaController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Patch('assinaturas/atualizar/:codigo')
-    @Bind(Param('codigo', ParseIntPipe), Body())
+    @Bind(Param('codigo', ParseIntPipe), Body(new AtualizarAssinaturaValidatorPipe()))
     async patchAssinatura(codigo, dados) {
         try {
             return await this.servicoAssinaturasValidas.atualizarAssinatura(codigo, dados)
@@ -116,6 +133,8 @@ export class AssinaturaController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('assinaturas/verificarAssinatura/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async verificaAssinatura(codigo) {
@@ -127,6 +146,8 @@ export class AssinaturaController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Delete('removerAssinatura/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async deleteAssinatura(codigo) {

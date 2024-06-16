@@ -1,6 +1,9 @@
-import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Patch, Body, HttpException, HttpStatus, ParseIntPipe, UsePipes } from '@nestjs/common';
+import { Controller, Dependencies, Get, Delete, Bind, Param, Post, Patch, Body, HttpException, HttpStatus, ParseIntPipe, UsePipes, UseGuards } from '@nestjs/common';
 import { ServicoCadastramento } from '../../domain/services/servicoCadastramento.service';
-import { CriarAplicativoValidatorPipe } from '../../validations/aplicativo/aplicativo-criar.validator';
+import { CriarAplicativoValidatorPipe, AtualizarCustoAplicativoValidatorPipe } from '../../validations/aplicativo/aplicativo.validator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/roles/roles.decorator';
 
 @Controller('servcad')
 @Dependencies(ServicoCadastramento) 
@@ -9,6 +12,8 @@ export class AplicativoController {
         this.servicoCadastramento = servicoCadastramento;
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('aplicativos')
     async getApps() {
         try{
@@ -25,6 +30,8 @@ export class AplicativoController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin', 'comum')
     @Get('aplicativos/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async getAppPorCodigo(codigo) {
@@ -36,6 +43,8 @@ export class AplicativoController {
         }
     }
     
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Post('cadastrarApp')
     @Bind(Body())
     @UsePipes(CriarAplicativoValidatorPipe)
@@ -48,8 +57,10 @@ export class AplicativoController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Patch('aplicativos/atualizarCusto/:codigo')
-    @Bind(Param('codigo', ParseIntPipe), Body())
+    @Bind(Param('codigo', ParseIntPipe), Body(new AtualizarCustoAplicativoValidatorPipe()))
     async patchApp(codigo, body) {
         try{
             const { custoMensal } = body;
@@ -67,6 +78,8 @@ export class AplicativoController {
         }
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Delete('removerApp/:codigo')
     @Bind(Param('codigo', ParseIntPipe))
     async deleteApp(codigo) {
